@@ -1,1 +1,1 @@
-ryanair
+ryanair-py
