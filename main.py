@@ -50,8 +50,8 @@ def elaborate():
     st.write("Link al tuo viaggio: ")
     st.write(link)
 
-airport = st.text_input("Inserisci il codice IATA del tuo aeroporto di partenza (ad es.: 'VCE', 'MXP', ecc.)",
-                         max_chars=3)
+airport = str(st.text_input("Inserisci il codice IATA del tuo aeroporto di partenza (ad es.: 'VCE', 'MXP', ecc.)",
+                         max_chars=3)).upper()
 
 col1, col2 = st.columns(2)
 with col1:
