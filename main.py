@@ -5,7 +5,6 @@ import pandas as pd
 import numpy as np
 
 #fare una lista ordinata e stamparla tutta
-#per lanciare, streamlit run main.py, dalla cartella in cui si trova il file
 
 from datetime import datetime, timedelta
 from ryanair import Ryanair
