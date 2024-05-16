@@ -1,10 +1,14 @@
 #there's a limit to the ryanair API request, maybe you have to wait a little bit bro!
 
+import os
+import csv
+from typing import Any
 import streamlit as st
 import pandas as pd
 import numpy as np
 
 #fare una lista ordinata e stamparla tutta
+#per lanciare, streamlit run main.py, dalla cartella in cui si trova il file
 
 from datetime import datetime, timedelta
 from ryanair import Ryanair
@@ -49,8 +53,23 @@ def elaborate():
     st.write("Link al tuo viaggio: ")
     st.write(link)
 
-airport = str(st.text_input("Inserisci il codice IATA del tuo aeroporto di partenza (ad es.: 'VCE', 'MXP', ecc.)",
-                         max_chars=3)).upper()
+list = {}
+with open(
+        os.path.join(os.path.dirname(__file__), "ryanair/airports.csv"),
+        newline="",
+        encoding="utf8",
+    ) as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            row: dict[str, Any] = row
+
+            name = row["name"]
+            iata = row["iata_code"]
+            
+            list[name] = {iata}
+
+airport = st.selectbox("Inserisci l'aeroporto di partenza (ATTENZIONE, nomi in inglese): ", list)
+airport = list[airport]
 
 col1, col2 = st.columns(2)
 with col1:
