@@ -1,7 +1,7 @@
 # Ryanair Python
 ![Testing status](https://github.com/cohaolain/ryanair-py/actions/workflows/python-app.yml/badge.svg) [![Coverage Status](https://coveralls.io/repos/github/cohaolain/ryanair-py/badge.svg?branch=develop)](https://coveralls.io/github/cohaolain/ryanair-py?branch=develop)
 
-This module allows you to retrieve the cheapest flights, with or without return flights, within a fixed set of dates.
+This module allows you to retrieve the cheapest flights within a fixed set of dates.
 
 This is done directly through Ryanair's API, and does not require an API key.
 
