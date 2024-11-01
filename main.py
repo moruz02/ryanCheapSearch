@@ -17,16 +17,24 @@ from ryanair.types import Flight
 api = Ryanair(currency="EUR")
 st.set_page_config(page_title="Ryanair Cheap Search")
 
-def elaborate(): 
-    for day in range (int(fromDay), int(toDay)): 
-        departure_date_from = departure_date_to = fromYear+"-"+fromMonth+"-"+str(day).zfill(2)
-        for rit in range (day, int(toDay)+1):
-            return_date_from = return_date_to = toYear+"-"+toMonth+"-"+str(rit).zfill(2)
-            val = api.get_cheapest_return_flights(airport, departure_date_from, departure_date_to, return_date_from, return_date_to)
+def elaborate(fromDate, toDate): 
+    bestPrice = 100000
+    while fromDate <= toDate:
+        tempDeparture = fromDate
+        tempDeparture += timedelta(days = 1)
+        while tempDeparture <= toDate:
+            val = api.get_cheapest_return_flights(source_airport=airport, 
+                                                  date_from=fromDate, 
+                                                  date_to=fromDate, 
+                                                  return_date_from=tempDeparture, 
+                                                  return_date_to=tempDeparture)
             if len(val) > 2:
                 price = val[0].totalPrice
                 if float(price) < bestPrice:
                     cheapestFlight = val[0]
+                    bestPrice = price
+            tempDeparture += timedelta(days = 1)
+        fromDate += timedelta(days = 1)
 
     data = {
         "Origin": [cheapestFlight.outbound.originFull, cheapestFlight.inbound.originFull],
@@ -42,7 +50,7 @@ def elaborate():
 
     st.title("Il risultato della tua ricerca:")
     st.table(df)
-    st.title("TOTAL PRICE: "+str(cheapestFlight.totalPrice))
+    st.title("TOTAL PRICE: "+str(round(cheapestFlight.totalPrice, 2)))
     link = "https://www.ryanair.com/it/it/trip/flights/select?adults=1&teens=0&children=0&infants=0&dateOut="\
             +str(cheapestFlight.outbound.departureTime).split()[0]+"&dateIn="+str(cheapestFlight.inbound.departureTime).split()[0]+\
             "&isConnectedFlight=false&discount=0&promoCode=&isReturn=true&originIata="+cheapestFlight.outbound.origin+\
@@ -73,25 +81,19 @@ airport = list[airport]
 
 col1, col2 = st.columns(2)
 with col1:
-    fromDate = str(st.date_input("Da: ", value=datetime.now().date()))
-    fromDay = fromDate.split('-')[2]
-    fromMonth = fromDate.split('-')[1]
-    fromYear = fromDate.split('-')[0]
+    fromDate = st.date_input("Da: ", value=datetime.now().date())
+
 with col2:
-    toDate = str(st.date_input("A: ", value=datetime.now().date()+timedelta(days=1)))
-    toDay = toDate.split('-')[2]
-    toMonth = toDate.split('-')[1]
-    toYear = toDate.split('-')[0]
+    toDate = st.date_input("A: ", value=datetime.now().date()+timedelta(days=1))
 
 cheapestFlight = ""
-bestPrice = 100000
 
 if st.button("Cerca"):
     if not airport:
         st.warning("Inserisci un aeroporto di partenza!")
     else:
         if fromDate <= toDate:
-            elaborate()
+            elaborate(fromDate, toDate)
         else:
             st.markdown("<h1 style='text-align: center;'>Inserisci delle date valide!</h1>", unsafe_allow_html=True)
 
